@@ -458,7 +458,7 @@ function getHomePage(requestUrl) {
 
     <footer>
       <p>
-        Powered by with <a class="heart">&hearts;</a> by
+        Powered with <a class="heart">&hearts;</a> by
         <a href="" target="_blank">AmiN</a>
         &copy; 2025
       </p>
