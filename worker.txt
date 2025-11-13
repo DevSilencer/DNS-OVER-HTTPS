@@ -99,51 +99,56 @@ function generateAppleProfile(requestUrl) {
   const dohUrl = `${baseUrl.protocol}//${baseUrl.hostname}/dns-query`;
   const hostname = baseUrl.hostname;
 
-  const profileUUID = crypto.randomUUID();
-  const dnsPayloadUUID = crypto.randomUUID();
+  const uuid1 = crypto.randomUUID();
+  const uuid2 = crypto.randomUUID();
+  const uuid3 = crypto.randomUUID();
 
   const mobileconfig = `<?xml version="1.0" encoding="UTF-8"?>
-  <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-  <plist version="1.0">
-  <dict>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
     <key>PayloadContent</key>
     <array>
-      <dict>
-        <key>PayloadType</key>
-        <string>com.apple.dns.proxy</string>
-        <key>PayloadVersion</key>
-        <integer>1</integer>
-        <key>PayloadIdentifier</key>
-        <string>com.cloudflare.doh.${dnsPayloadUUID}</string>
-        <key>PayloadUUID</key>
-        <string>${dnsPayloadUUID}</string>
-        <key>DNSProxyConfigurations</key>
-        <array>
-          <dict>
-            <key>DNSProxyServerAddress</key>
-            <string>${dohUrl}</string>
-            <key>DNSProxyServerPort</key>
-            <integer>443</integer>
-            <key>DNSProxyLocal</key>
-            <true/>
+        <dict>
+            <key>DNSSettings</key>
+            <dict>
+                <key>DNSProtocol</key>
+                <string>HTTPS</string>
+                <key>ServerURL</key>
+                <string>${dohUrl}</string>
+            </dict>
+            <key>PayloadDescription</key>
+            <string>Configures device to use Anonymous DoH Proxy</string>
+            <key>PayloadDisplayName</key>
+            <string>Anonymous DoH Proxy</string>
+            <key>PayloadIdentifier</key>
+            <string>com.cloudflare.${uuid2}.dnsSettings.managed</string>
+            <key>PayloadType</key>
+            <string>com.apple.dnsSettings.managed</string>
             <key>PayloadUUID</key>
-            <string>${crypto.randomUUID()}</string>
-          </dict>
-        </array>
-      </dict>
+            <string>${uuid3}</string>
+            <key>PayloadVersion</key>
+            <integer>1</integer>
+            <key>ProhibitDisablement</key>
+            <false/>
+        </dict>
     </array>
+    <key>PayloadDescription</key>
+    <string>This profile enables encrypted DNS (DNS over HTTPS) on iOS, iPadOS, and macOS devices using your personal DoH Proxy.</string>
+    <key>PayloadDisplayName</key>
+    <string>Anonymous DoH Proxy - ${hostname}</string>
+    <key>PayloadIdentifier</key>
+    <string>com.cloudflare.${uuid1}</string>
+    <key>PayloadRemovalDisallowed</key>
+    <false/>
     <key>PayloadType</key>
     <string>Configuration</string>
+    <key>PayloadUUID</key>
+    <string>${uuid1}</string>
     <key>PayloadVersion</key>
     <integer>1</integer>
-    <key>PayloadIdentifier</key>
-    <string>com.cloudflare.doh.profile.${profileUUID}</string>
-    <key>PayloadUUID</key>
-    <string>${profileUUID}</string>
-    <key>PayloadDisplayName</key>
-    <string>DoH Proxy</string>
-  </dict>
-  </plist>`;
+</dict>
+</plist>`;
 
   return new Response(mobileconfig, {
     status: 200,
